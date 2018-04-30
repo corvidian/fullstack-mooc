@@ -12,16 +12,18 @@ class App extends React.Component {
   }
 
   render() {
-    const addHyva = () => this.setState({ hyva: this.state.hyva + 1 })
-    const addNeutraali = () => this.setState({ neutraali: this.state.neutraali + 1 })
-    const addHuono = () => this.setState({ huono: this.state.huono + 1 })
+    const add = (field) => {
+      return () => {
+        this.setState({ [field]: this.state[field] + 1 })
+      }
+    }
 
     return (
       <div>
         <Otsikko text="anna palautetta" />
-        <Button text="hyvä" handler={addHyva} />
-        <Button text="neutraali" handler={addNeutraali} />
-        <Button text="huono" handler={addHuono} />
+        <Button text="hyvä" handler={add('hyva')} />
+        <Button text="neutraali" handler={add('neutraali')} />
+        <Button text="huono" handler={add('huono')} />
         <Statistics values={this.state} />
       </div>
     )
@@ -51,12 +53,12 @@ const StatisticsRows = ({ hyva, neutraali, huono }) => {
   const average = (sum > 0 ? Number.parseFloat((hyva - huono) / sum).toFixed(1) : 0)
   const positive = (sum > 0 ? Number.parseFloat(100 * hyva / sum).toFixed(1) : 0)
 
-  if (sum >0) return [
-    <Statistic header="hyvä" value={hyva} />,
-    <Statistic header="neutraali" value={neutraali} />,
-    <Statistic header="huono" value={huono} />,
-    <Statistic header="keskiarvo" value={average} />,
-    <Statistic header="positiivisia" value={positive + " %"} />
+  if (sum > 0) return [
+    <Statistic key="hyvä" header="hyvä" value={hyva} />,
+    <Statistic key="neutraali" header="neutraali" value={neutraali} />,
+    <Statistic key="huono" header="huono" value={huono} />,
+    <Statistic key="keskiarvo" header="keskiarvo" value={average} />,
+    <Statistic key="positiivisia" header="positiivisia" value={positive + " %"} />
   ]
   else return <p>ei yhtään palautetta annettu</p>
 }
