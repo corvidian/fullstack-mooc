@@ -1,20 +1,25 @@
 import React from 'react';
+import axios from 'axios';
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            persons: [
-                { name: 'Arto Hellas', phone: '040-123456' },
-                { name: 'Martti Tienari', phone: '040-123456' },
-                { name: 'Arto Järvinen', phone: '040-123456' },
-                { name: 'Lea Kutvonen', phone: '040-123456' }
-            ],
+            persons: [],
             newName: '',
             newPhone: '',
             filter: '',
             alerts: []
         }
+    }
+
+    componentWillMount = () => {
+        axios
+            .get("http://localhost:3001/persons")
+            .then(response => {
+                const people = response.data.map(p => ({ name: p.name, phone: p.number }))
+                this.setState({ persons: people })
+            })
     }
 
     nameHandler = (event) => this.setState({ newName: event.target.value })
