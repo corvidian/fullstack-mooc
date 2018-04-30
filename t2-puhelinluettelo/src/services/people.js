@@ -2,9 +2,9 @@ import axios from 'axios'
 
 const baseUrl = 'http://localhost:3001/persons'
 
-const to = (ourPerson) => ({ name: ourPerson.name, number: ourPerson.phone })
+const to = (ourPerson) => ({ name: ourPerson.name, number: ourPerson.phone, id: ourPerson.id })
 
-const from = (theirPerson) => ({ name: theirPerson.name, phone: theirPerson.number })
+const from = (theirPerson) => ({ name: theirPerson.name, phone: theirPerson.number, id: theirPerson.id })
 
 const getAll = () => axios
     .get(baseUrl)
@@ -18,4 +18,7 @@ const update = (id, newPerson) => axios
     .put(`${baseUrl}/${id}`, to(newPerson))
     .then(response => from(response.data))
 
-export default { getAll, create, update }
+const del = (id) => axios
+    .delete(`${baseUrl}/${id}`)
+
+export default { getAll, create, update, del }

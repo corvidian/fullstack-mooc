@@ -53,6 +53,15 @@ class App extends React.Component {
         }
     }
 
+    deleteHandler = (person) => {
+        return () => {
+            if (window.confirm(`Poistetaanko ${person.name}?`)) {
+                peopleService.del(person.id)
+                    .then(response => { this.componentWillMount() })
+            }
+        }
+    }
+
     render() {
         return (
             <div>
@@ -66,7 +75,7 @@ class App extends React.Component {
                     phoneHandler={this.phoneHandler}
                     formHandler={this.addPerson}
                 />
-                <PeopleList people={this.state.persons} filter={this.state.filter} />
+                <PeopleList people={this.state.persons} filter={this.state.filter} deleteHandler={this.deleteHandler} />
             </div>
         )
     }
@@ -94,7 +103,7 @@ const FilterForm = ({ filter, handler }) => (
     <div>rajaa näytettäviä<input value={filter} onChange={handler} /></div>
 )
 
-const PeopleList = ({ people, filter }) => {
+const PeopleList = ({ people, filter, deleteHandler }) => {
     const peopleShown = filter.length === 0 ?
         people :
         people.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
@@ -103,19 +112,22 @@ const PeopleList = ({ people, filter }) => {
         <div>
             <h2>Numerot</h2>
             <table><tbody>
-                {peopleShown.map(p => <Person key={p.name} person={p} />)}
+                {peopleShown.map(p => <Person key={p.id} person={p} deleteHandler={deleteHandler(p)} />)}
             </tbody></table>
         </div>
     )
 }
 
-const Person = ({ person }) => (
+const Person = ({ person, deleteHandler }) => (
     <tr>
         <td>
             {person.name}
         </td>
         <td>
             {person.phone}
+        </td>
+        <td>
+            <button onClick={deleteHandler}>poista</button>
         </td>
     </tr>
 )
