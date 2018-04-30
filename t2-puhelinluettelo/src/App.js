@@ -49,34 +49,59 @@ class App extends React.Component {
     }
 
     render() {
-        const personsShown = this.state.filter.length === 0 ?
-            this.state.persons :
-            this.state.persons.filter(p => p.name.toLowerCase().includes(this.state.filter.toLowerCase()))
-
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
-                <div>rajaa näytettäviä<input value={this.state.filter} onChange={this.filterHandler} /></div>
-                <h2>Lisää uusi</h2>
-                <form onSubmit={this.addPerson}>
-                    {this.state.alerts.map(a => <p key={a}>{a}</p>)}
-                    <div>
-                        nimi: <input value={this.state.newName} onChange={this.nameHandler} />
-                    </div>
-                    <div>
-                        numero: <input value={this.state.newPhone} onChange={this.phoneHandler} />
-                    </div>
-                    <div>
-                        <button type="submit">lisää</button>
-                    </div>
-                </form>
-                <h2>Numerot</h2>
-                <table><tbody>
-                    {personsShown.map(p => <Person key={p.name} person={p} />)}
-                </tbody></table>
+                <FilterForm filter={this.state.filter} handler={this.filterHandler} />
+                <PersonForm
+                    alerts={this.state.alerts}
+                    newName={this.state.newName}
+                    newPhone={this.state.newPhone}
+                    nameHandler={this.nameHandler}
+                    phoneHandler={this.phoneHandler}
+                    formHandler={this.addPerson}
+                />
+                <PeopleList people={this.state.persons} filter={this.state.filter} />
             </div>
         )
     }
+}
+
+const PersonForm = ({ alerts, newName, newPhone, nameHandler, phoneHandler, formHandler }) => (
+    <div>
+        <h2>Lisää uusi</h2>
+        <form onSubmit={formHandler}>
+            {alerts.map(a => <p key={a}>{a}</p>)}
+            <div>
+                nimi: <input value={newName} onChange={nameHandler} />
+            </div>
+            <div>
+                numero: <input value={newPhone} onChange={phoneHandler} />
+            </div>
+            <div>
+                <button type="submit">lisää</button>
+            </div>
+        </form>
+    </div>
+)
+
+const FilterForm = ({ filter, handler }) => (
+    <div>rajaa näytettäviä<input value={filter} onChange={handler} /></div>
+)
+
+const PeopleList = ({ people, filter }) => {
+    const peopleShown = filter.length === 0 ?
+        people :
+        people.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
+
+    return (
+        <div>
+            <h2>Numerot</h2>
+            <table><tbody>
+                {peopleShown.map(p => <Person key={p.name} person={p} />)}
+            </tbody></table>
+        </div>
+    )
 }
 
 const Person = ({ person }) => (
