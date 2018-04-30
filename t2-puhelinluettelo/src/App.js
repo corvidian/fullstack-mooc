@@ -5,30 +5,44 @@ class App extends React.Component {
         super(props)
         this.state = {
             persons: [
-                { name: 'Arto Hellas' }
+                { name: 'Arto Hellas', phone: '040-123456' },
+                { name: 'Martti Tienari', phone: '040-123456' },
+                { name: 'Arto Järvinen', phone: '040-123456' },
+                { name: 'Lea Kutvonen', phone: '040-123456' }
             ],
             newName: '',
-            alert: []
+            newPhone: '',
+            alerts: []
         }
     }
 
     nameHandler = (event) => this.setState({ newName: event.target.value })
+    phoneHandler = (event) => this.setState({ newPhone: event.target.value })
 
     addPerson = (event) => {
         event.preventDefault()
-        const newPerson = { name: this.state.newName }
+        const newPerson = { name: this.state.newName, phone: this.state.newPhone }
 
-        this.setState({ alert: [] })
+        const alerts = []
 
         if (this.state.persons.some(p => p.name === newPerson.name)) {
-            this.setState({ alert: ['Nimi on jo luettelossa'] })
-        } else if (this.state.newName === '') {
-            this.setState({ alert: ['Nimi on tyhjä'] })
-        } else {
+            alerts.push('Nimi on jo luettelossa')
+        }
+        if (this.state.newName === '') {
+            alerts.push('Nimi on tyhjä')
+        }
+        if(this.state.newPhone === '') {
+            alerts.push('Numero on tyhjä')
+        }
+        if (alerts.length === 0) {
             this.setState({
                 persons: this.state.persons.concat(newPerson),
-                newName: ''
+                newName: '',
+                newPhone: '',
+                alerts: []
             })
+        } else {
+            this.setState({alerts: alerts})
         }
     }
 
@@ -37,9 +51,12 @@ class App extends React.Component {
             <div>
                 <h2>Puhelinluettelo</h2>
                 <form onSubmit={this.addPerson}>
+                    {this.state.alerts.map(a => <p key={a}>{a}</p>)}
                     <div>
-                        {this.state.alert.map(a => <p key={a}>{a}</p>)}
                         nimi: <input value={this.state.newName} onChange={this.nameHandler} />
+                    </div>
+                    <div>
+                        numero: <input value={this.state.newPhone} onChange={this.phoneHandler} />
                     </div>
                     <div>
                         <button type="submit">lisää</button>
@@ -55,7 +72,14 @@ class App extends React.Component {
 }
 
 const Person = ({ person }) => (
-    <tr><td>{person.name}</td></tr>
+    <tr>
+        <td>
+            {person.name}
+        </td>
+        <td>
+            {person.phone}
+        </td>
+    </tr>
 )
 
 export default App
