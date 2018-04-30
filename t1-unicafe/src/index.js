@@ -44,22 +44,29 @@ const Statistic = (props) => {
   const { header, value } = props
 
   return (
-    <p>{header} {value}</p>
+    <tr>
+      <td>{header}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
-const StatisticsRows = ({ hyva, neutraali, huono }) => {
+const StatisticsTable = ({ hyva, neutraali, huono }) => {
   const sum = hyva + neutraali + huono
   const average = (sum > 0 ? Number.parseFloat((hyva - huono) / sum).toFixed(1) : 0)
   const positive = (sum > 0 ? Number.parseFloat(100 * hyva / sum).toFixed(1) : 0)
 
-  if (sum > 0) return [
-    <Statistic key="hyvä" header="hyvä" value={hyva} />,
-    <Statistic key="neutraali" header="neutraali" value={neutraali} />,
-    <Statistic key="huono" header="huono" value={huono} />,
-    <Statistic key="keskiarvo" header="keskiarvo" value={average} />,
-    <Statistic key="positiivisia" header="positiivisia" value={positive + " %"} />
-  ]
+  if (sum > 0) return (
+    <table>
+      <tbody>
+        <Statistic key="hyvä" header="hyvä" value={hyva} />
+        <Statistic key="neutraali" header="neutraali" value={neutraali} />
+        <Statistic key="huono" header="huono" value={huono} />
+        <Statistic key="keskiarvo" header="keskiarvo" value={average} />
+        <Statistic key="positiivisia" header="positiivisia" value={positive + " %"} />
+      </tbody>
+    </table>
+  )
   else return <p>ei yhtään palautetta annettu</p>
 }
 
@@ -69,7 +76,7 @@ const Statistics = (props) => {
   return (
     <div>
       <Otsikko text="statistiikka" />
-      <StatisticsRows hyva={hyva} neutraali={neutraali} huono={huono} />
+      <StatisticsTable hyva={hyva} neutraali={neutraali} huono={huono} />
     </div>
   )
 }
