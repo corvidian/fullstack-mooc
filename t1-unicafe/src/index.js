@@ -38,20 +38,29 @@ const Button = ({ text, handler }) => (
   </button>
 )
 
+const Statistic = (props) => {
+  const { header, value } = props
+
+  return (
+    <p>{header} {value}</p>
+  )
+}
+
 const Statistics = (props) => {
   const { hyva, neutraali, huono } = props.values
 
-  const average = Number.parseFloat((hyva - huono) / (hyva + neutraali + huono)).toFixed(1)
-  const positive = Number.parseFloat(100 * hyva / (hyva + neutraali + huono)).toFixed(1)
+  const sum = hyva + neutraali + huono
+  const average = (sum > 0 ? Number.parseFloat((hyva - huono) / sum).toFixed(1) : 0)
+  const positive = (sum > 0 ? Number.parseFloat(100 * hyva / sum).toFixed(1) : 0)
 
   return (
     <div>
       <Otsikko text="statistiikka" />
-      <p>hyvä {hyva}</p>
-      <p>neutraali {neutraali}</p>
-      <p>huono {huono}</p>
-      <p>keskiarvo {average}</p>
-      <p>positiivisia {positive} %</p>
+      <Statistic header="hyvä" value={hyva} />
+      <Statistic header="neutraali" value={neutraali} />
+      <Statistic header="huono" value={huono} />
+      <Statistic header="keskiarvo" value={average} />
+      <Statistic header="positiivisia" value={positive + " %"} />
     </div>
   )
 }
