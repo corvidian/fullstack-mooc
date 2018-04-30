@@ -42,12 +42,15 @@ class App extends React.Component {
             alerts.push('Numero on tyhjä')
         }
         if (alerts.length === 0) {
-            this.setState({
-                persons: this.state.persons.concat(newPerson),
-                newName: '',
-                newPhone: '',
-                alerts: []
-            })
+            axios
+                .post('http://localhost:3001/persons', { name: newPerson.name, number: newPerson.phone })
+                .then(response =>
+                    this.setState({
+                        persons: this.state.persons.concat(newPerson),
+                        newName: '',
+                        newPhone: '',
+                        alerts: []
+                    }))
         } else {
             this.setState({ alerts: alerts })
         }
