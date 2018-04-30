@@ -12,12 +12,14 @@ class App extends React.Component {
             ],
             newName: '',
             newPhone: '',
+            filter: '',
             alerts: []
         }
     }
 
     nameHandler = (event) => this.setState({ newName: event.target.value })
     phoneHandler = (event) => this.setState({ newPhone: event.target.value })
+    filterHandler = (event) => this.setState({ filter: event.target.value })
 
     addPerson = (event) => {
         event.preventDefault()
@@ -31,7 +33,7 @@ class App extends React.Component {
         if (this.state.newName === '') {
             alerts.push('Nimi on tyhjä')
         }
-        if(this.state.newPhone === '') {
+        if (this.state.newPhone === '') {
             alerts.push('Numero on tyhjä')
         }
         if (alerts.length === 0) {
@@ -42,14 +44,20 @@ class App extends React.Component {
                 alerts: []
             })
         } else {
-            this.setState({alerts: alerts})
+            this.setState({ alerts: alerts })
         }
     }
 
     render() {
+        const personsShown = this.state.filter.length === 0 ?
+            this.state.persons :
+            this.state.persons.filter(p => p.name.toLowerCase().includes(this.state.filter.toLowerCase()))
+
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                <div>rajaa näytettäviä<input value={this.state.filter} onChange={this.filterHandler} /></div>
+                <h2>Lisää uusi</h2>
                 <form onSubmit={this.addPerson}>
                     {this.state.alerts.map(a => <p key={a}>{a}</p>)}
                     <div>
@@ -64,7 +72,7 @@ class App extends React.Component {
                 </form>
                 <h2>Numerot</h2>
                 <table><tbody>
-                    {this.state.persons.map(p => <Person key={p.name} person={p} />)}
+                    {personsShown.map(p => <Person key={p.name} person={p} />)}
                 </tbody></table>
             </div>
         )
