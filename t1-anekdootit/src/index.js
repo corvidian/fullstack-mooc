@@ -30,6 +30,7 @@ class App extends React.Component {
         <Votes votes={this.state.votes[this.state.selected]} />
         <Button text="vote" handler={vote(this.state.selected)} />
         <Button text="next anecdote" handler={randomize} />
+        <Best anecdotes={this.props.anecdotes} votes={this.state.votes} />
       </div>
     )
   }
@@ -48,6 +49,22 @@ const Button = ({ text, handler }) => (
     {text}
   </button>
 )
+
+const Best = ({ anecdotes, votes }) => {
+  const best = anecdotes
+    .map((a, i) => ({ anecdote: a, vote: votes[i] }))
+    .reduce((currentBest, next) => {
+      if (next.vote > currentBest.vote) return next
+      else return currentBest
+    })
+  return (
+    <div>
+      <h2>anecdote with the most votes:</h2>
+      <p>{best.anecdote}</p>
+      <p>has {best.vote} votes</p>
+    </div>
+  )
+}
 
 const anecdotes = [
   'If it hurts, do it more often',
