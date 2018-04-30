@@ -7,7 +7,8 @@ class App extends React.Component {
             persons: [
                 { name: 'Arto Hellas' }
             ],
-            newName: ''
+            newName: '',
+            alert: []
         }
     }
 
@@ -17,7 +18,18 @@ class App extends React.Component {
         event.preventDefault()
         const newPerson = { name: this.state.newName }
 
-        this.setState({ persons: this.state.persons.concat(newPerson) })
+        this.setState({ alert: [] })
+
+        if (this.state.persons.some(p => p.name === newPerson.name)) {
+            this.setState({ alert: ['Nimi on jo luettelossa'] })
+        } else if (this.state.newName === '') {
+            this.setState({ alert: ['Nimi on tyhjä'] })
+        } else {
+            this.setState({
+                persons: this.state.persons.concat(newPerson),
+                newName: ''
+            })
+        }
     }
 
     render() {
@@ -26,6 +38,7 @@ class App extends React.Component {
                 <h2>Puhelinluettelo</h2>
                 <form onSubmit={this.addPerson}>
                     <div>
+                        {this.state.alert.map(a => <p key={a}>{a}</p>)}
                         nimi: <input value={this.state.newName} onChange={this.nameHandler} />
                     </div>
                     <div>
