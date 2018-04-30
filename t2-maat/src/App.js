@@ -19,6 +19,7 @@ class App extends React.Component {
     }
 
     filterHandler = (event) => this.setState({ filter: event.target.value })
+    clickHandler = (event) => this.setState({ filter: event.target.innerText })
 
     render() {
         const matchingCountries = this.state.countries.filter(c => c.name.toLowerCase().includes(this.state.filter.toLowerCase()))
@@ -31,7 +32,7 @@ class App extends React.Component {
                 {matchingCountries.length > 10 ?
                     <p>too many matches, specify another filter</p> :
                     matchingCountries.length > 1 ?
-                        <CountryList countries={matchingCountries} /> :
+                        <CountryList countries={matchingCountries} clickHandler={this.clickHandler} /> :
                         matchingCountries.length > 0 ?
                             <CountryInfo country={matchingCountries[0]} /> :
                             <p>No matches</p>
@@ -45,10 +46,10 @@ const FilterForm = ({ filter, handler }) => (
     <div>find countries: <input value={filter} onChange={handler} /></div>
 )
 
-const CountryList = ({ countries }) => (
+const CountryList = ({ countries, clickHandler }) => (
     <ul>
         {countries.map(c =>
-            <li key={c.alpha3Code}>{c.name}</li>
+            <li onClick={clickHandler} key={c.alpha3Code}>{c.name}</li>
         )}
     </ul>
 )
