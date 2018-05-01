@@ -24,32 +24,38 @@ class App extends React.Component {
     phoneHandler = (event) => this.setState({ newPhone: event.target.value })
     filterHandler = (event) => this.setState({ filter: event.target.value })
 
+    resetForm = { newName: '', newPhone: '', alerts: [] }
+
     addPerson = (event) => {
         event.preventDefault()
         const newPerson = { name: this.state.newName, phone: this.state.newPhone }
 
         const alerts = []
 
-        if (this.state.persons.some(p => p.name === newPerson.name)) {
-            alerts.push('Nimi on jo luettelossa')
-        }
         if (this.state.newName === '') {
             alerts.push('Nimi on tyhjä')
         }
         if (this.state.newPhone === '') {
             alerts.push('Numero on tyhjä')
         }
-        if (alerts.length === 0) {
+        const foundPerson = this.state.persons.find(p => p.name === newPerson.name)
+        if (alerts.length === 0 && foundPerson) {
+            this.updatePerson(foundPerson, newPerson.phone)
+        } else if (alerts.length === 0) {
             peopleService.create(newPerson)
                 .then(person =>
-                    this.setState({
-                        persons: this.state.persons.concat(person),
-                        newName: '',
-                        newPhone: '',
-                        alerts: []
-                    }))
+                    this.setState({ ...this.resetForm, persons: this.state.persons.concat(person) }))
         } else {
             this.setState({ alerts: alerts })
+        }
+    }
+
+    updatePerson = (person, newNumber) => {
+        if (window.confirm(`${person.name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+            peopleService.update({ ...person, phone: newNumber })
+                .then(person => {
+                    this.setState({ ...this.resetForm, persons: this.state.persons.map(p => p.id === person.id ? person : p) })
+                })
         }
     }
 

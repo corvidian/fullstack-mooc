@@ -14,8 +14,8 @@ const create = (newPerson) => axios
     .post(baseUrl, to(newPerson))
     .then(response => from(response.data))
 
-const update = (id, newPerson) => axios
-    .put(`${baseUrl}/${id}`, to(newPerson))
+const update = (person) => axios
+    .put(`${baseUrl}/${person.id}`, to(person))
     .then(response => from(response.data))
 
 const del = (id) => axios
