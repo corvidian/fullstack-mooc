@@ -20,6 +20,7 @@ const App = () => {
       <Button text="good" handleClick={increaseGood} />
       <Button text="neutral" handleClick={increaseNeutral} />
       <Button text="bad" handleClick={increaseBad} />
+      <h1>Statistics</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </>
   );
@@ -28,9 +29,8 @@ const App = () => {
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
 
-  return (
-    <>
-      <h1>Statistics</h1>
+  if (all > 0) {
+    return (
       <table>
         <tbody>
           <Statistic name="good" value={good} />
@@ -41,8 +41,9 @@ const Statistics = ({ good, neutral, bad }) => {
           <Statistic name="positive" value={(good / all) * 100 + " %"} />
         </tbody>
       </table>
-    </>
-  );
+    );
+  }
+  return <p>No feedback given</p>;
 };
 
 const Statistic = ({ name, value }) => (
