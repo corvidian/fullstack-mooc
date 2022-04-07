@@ -1,0 +1,11 @@
+selain->+palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa\n{"content":"asdf","date":"2022-04-07T15:45:12.104Z"}
+note over palvelin:
+palvelin tallettaa muistiinpanon
+end note
+palvelin-->-selain: 201 Created\n{"message":"note created"}
+
+note over selain:
+selaimen tapahtumakäsittelijä
+renderöi lisätyn muistiinpanon
+end note
+
