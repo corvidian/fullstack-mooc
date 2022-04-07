@@ -14,45 +14,42 @@ const App = () => {
   const increaseNeutral = () => setNeutral(neutral + 1);
   const increaseBad = () => setBad(bad + 1);
 
-  const all = good + neutral + bad;
-
   return (
     <>
       <h1>Give feedback</h1>
       <Button text="good" handleClick={increaseGood} />
       <Button text="neutral" handleClick={increaseNeutral} />
       <Button text="bad" handleClick={increaseBad} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
+    </>
+  );
+};
+
+const Statistics = ({ good, neutral, bad }) => {
+  const all = good + neutral + bad;
+
+  return (
+    <>
       <h1>Statistics</h1>
       <table>
         <tbody>
-          <tr>
-            <td>good</td>
-            <td>{good}</td>
-          </tr>
-          <tr>
-            <td>neutral</td>
-            <td>{neutral}</td>
-          </tr>
-          <tr>
-            <td>bad</td>
-            <td>{bad}</td>
-          </tr>
-          <tr>
-            <td>all</td>
-            <td>{all}</td>
-          </tr>
-          <tr>
-            <td>average</td>
-            <td>{(good - bad) / all}</td>
-          </tr>
-          <tr>
-            <td>positive</td>
-            <td>{(good / all) * 100} %</td>
-          </tr>
+          <Statistic name="good" value={good} />
+          <Statistic name="neutral" value={neutral} />
+          <Statistic name="bad" value={bad} />
+          <Statistic name="all" value={all} />
+          <Statistic name="average" value={(good - bad) / all} />
+          <Statistic name="positive" value={(good / all) * 100 + " %"} />
         </tbody>
       </table>
     </>
   );
 };
+
+const Statistic = ({ name, value }) => (
+  <tr>
+    <td>{name}</td>
+    <td>{value}</td>
+  </tr>
+);
 
 export default App;
