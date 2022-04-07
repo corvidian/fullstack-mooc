@@ -33,12 +33,12 @@ const Statistics = ({ good, neutral, bad }) => {
     return (
       <table>
         <tbody>
-          <Statistic name="good" value={good} />
-          <Statistic name="neutral" value={neutral} />
-          <Statistic name="bad" value={bad} />
-          <Statistic name="all" value={all} />
-          <Statistic name="average" value={(good - bad) / all} />
-          <Statistic name="positive" value={(good / all) * 100 + " %"} />
+          <StatisticLine name="good" value={good} />
+          <StatisticLine name="neutral" value={neutral} />
+          <StatisticLine name="bad" value={bad} />
+          <StatisticLine name="all" value={all} />
+          <StatisticLine name="average" value={(good - bad) / all} />
+          <StatisticLine name="positive" value={(good / all) * 100 + " %"} />
         </tbody>
       </table>
     );
@@ -46,7 +46,7 @@ const Statistics = ({ good, neutral, bad }) => {
   return <p>No feedback given</p>;
 };
 
-const Statistic = ({ name, value }) => (
+const StatisticLine = ({ name, value }) => (
   <tr>
     <td>{name}</td>
     <td>{value}</td>
