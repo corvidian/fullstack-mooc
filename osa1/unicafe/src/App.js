@@ -14,13 +14,15 @@ const App = () => {
   const increaseNeutral = () => setNeutral(neutral + 1);
   const increaseBad = () => setBad(bad + 1);
 
+  const all = good + neutral + bad;
+
   return (
     <>
-      <h1>give feedback</h1>
+      <h1>Give feedback</h1>
       <Button text="good" handleClick={increaseGood} />
       <Button text="neutral" handleClick={increaseNeutral} />
       <Button text="bad" handleClick={increaseBad} />
-      <h1>statistics</h1>
+      <h1>Statistics</h1>
       <table>
         <tbody>
           <tr>
@@ -34,6 +36,18 @@ const App = () => {
           <tr>
             <td>bad</td>
             <td>{bad}</td>
+          </tr>
+          <tr>
+            <td>all</td>
+            <td>{all}</td>
+          </tr>
+          <tr>
+            <td>average</td>
+            <td>{(good - bad) / all}</td>
+          </tr>
+          <tr>
+            <td>positive</td>
+            <td>{(good / all) * 100} %</td>
           </tr>
         </tbody>
       </table>
