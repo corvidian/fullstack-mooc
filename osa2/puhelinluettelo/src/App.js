@@ -46,32 +46,56 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
-      <p>
-        filter shown with{" "}
-        <input value={filterText} onChange={handleFilterChange} />
-      </p>
+      <Filter filterText={filterText} handleChange={handleFilterChange} />
       <h3>Add a new entry</h3>
-      <form onSubmit={addEntry}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-
+      <PersonForm
+        addEntry={addEntry}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
       <h3>Numbers</h3>
-
-      {shownEntries.map((person) => (
-        <p key={person.name}>
-          {person.name} {person.number}
-        </p>
-      ))}
+      <Entries shownEntries={shownEntries} />
     </>
   );
 };
+
+const Filter = ({ filterText, handleChange }) => (
+  <p>
+    filter shown with <input value={filterText} onChange={handleChange} />
+  </p>
+);
+
+const PersonForm = ({
+  addEntry,
+  newName,
+  handleNameChange,
+  newNumber,
+  handleNumberChange,
+}) => (
+  <form onSubmit={addEntry}>
+    <div>
+      name: <input value={newName} onChange={handleNameChange} />
+    </div>
+    <div>
+      number: <input value={newNumber} onChange={handleNumberChange} />
+    </div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+);
+
+const Entries = ({ shownEntries }) =>
+  shownEntries.map((entry) => (
+    <Entry key={entry.name} name={entry.name} number={entry.number} />
+  ));
+
+const Entry = ({ name, number }) => (
+  <p>
+    {name} {number}
+  </p>
+);
 
 export default App;
