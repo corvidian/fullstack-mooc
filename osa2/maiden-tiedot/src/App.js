@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const api_key = process.env.REACT_APP_API_KEY;
+
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
@@ -19,9 +21,8 @@ const App = () => {
     new RegExp(filter, "i").test(country.name.common)
   );
 
-  console.log(matchingCountries);
   const chooseView = () => {
-    if (matchingCountries.length == 1) {
+    if (matchingCountries.length === 1) {
       return <Details country={matchingCountries[0]} />;
     } else if (matchingCountries.length < 1) {
       return <p>No matches</p>;
@@ -59,11 +60,39 @@ const Details = ({ country }) => (
 
     <img
       alt={`The flag of ${country.name.common}`}
-      src={country.flags.png}
+      src={country.flags.svg}
       height="200"
     />
+
+    <Weather city={country.capital[0]} />
   </div>
 );
+
+const Weather = ({ city }) => {
+  const [weather, setWeather] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${api_key}`
+      )
+      .then((response) => setWeather(response.data));
+  }, [city]);
+
+  if (weather) {
+    return (
+      <>
+        <h2>Weather in {city}</h2>
+        <p>temperature {weather.main.temp} celcius</p>
+        <img
+          src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+          alt={weather.weather[0].main}
+        />
+        <p>wind {weather.wind.speed} m/s</p>
+      </>
+    );
+  }
+};
 
 const LanguageList = ({ country }) => (
   <ul>
