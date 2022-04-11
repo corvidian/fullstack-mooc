@@ -17,14 +17,30 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+    const oldEntry = persons.find((person) => person.name === newName);
+    if (oldEntry) {
+      updateEntry(oldEntry.id, entry);
     } else {
       peopleService.create(entry).then((returnedEntry) => {
         setPersons(persons.concat(returnedEntry));
         setNewName("");
         setNewNumber("");
       });
+    }
+  };
+
+  const updateEntry = (id, entry) => {
+    const message = `${entry.name} is already added to phonebook, do you want to replace the number with a new one?`;
+    if (window.confirm(message)) {
+      peopleService
+        .update(id, entry)
+        .then((updatedEntry) =>
+          setPersons(
+            persons.map((person) =>
+              person.id === updatedEntry.id ? updatedEntry : person
+            )
+          )
+        );
     }
   };
 
