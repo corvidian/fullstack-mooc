@@ -13,6 +13,8 @@ const App = () => {
 
   const handleChange = (event) => setFilter(event.target.value);
 
+  const changeCountry = (name) => setFilter(name);
+
   const matchingCountries = countries.filter((country) =>
     new RegExp(filter, "i").test(country.name.common)
   );
@@ -26,13 +28,18 @@ const App = () => {
     } else if (matchingCountries.length > 10) {
       return <p>Too many matches, specify another filter</p>;
     } else {
-      return <CountryList countries={matchingCountries} />;
+      return (
+        <CountryList
+          countries={matchingCountries}
+          changeCountry={changeCountry}
+        />
+      );
     }
   };
 
   return (
     <>
-      find countries <input onChange={handleChange}></input>
+      find countries <input value={filter} onChange={handleChange} />
       {chooseView()}
     </>
   );
@@ -42,7 +49,7 @@ const Details = ({ country }) => (
   <div>
     <h1>{country.name.common}</h1>
     <div>
-      {country.capital.length > 1 ? "capitals" : "capital"}:{" "}
+      {country.capital.length > 1 ? "capitals: " : "capital: "}
       {country.capital.join(", ")}
     </div>
     <div>area: {country.area}</div>
@@ -66,12 +73,25 @@ const LanguageList = ({ country }) => (
   </ul>
 );
 
-const CountryList = ({ countries }) => (
+const CountryList = ({ countries, changeCountry }) => (
   <ul>
     {countries.map((country) => (
-      <li key={country.ccn3}>{country.name.common}</li>
+      <CountryListItem
+        key={country.ccn3}
+        country={country}
+        changeCountry={changeCountry}
+      />
     ))}
   </ul>
 );
+
+const CountryListItem = ({ country, changeCountry }) => {
+  const name = country.name.common;
+  return (
+    <li>
+      {name} <button onClick={() => changeCountry(name)}>show</button>
+    </li>
+  );
+};
 
 export default App;
