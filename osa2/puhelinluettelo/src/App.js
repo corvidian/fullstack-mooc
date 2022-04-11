@@ -22,9 +22,11 @@ const App = () => {
     if (persons.find((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat(entry));
-      setNewName("");
-      setNewNumber("");
+      axios.post("http://localhost:3001/persons", entry).then((response) => {
+        setPersons(persons.concat(response.data));
+        setNewName("");
+        setNewNumber("");
+      });
     }
   };
 
@@ -91,7 +93,7 @@ const PersonForm = ({
 
 const Entries = ({ shownEntries }) =>
   shownEntries.map((entry) => (
-    <Entry key={entry.name} name={entry.name} number={entry.number} />
+    <Entry key={entry.id} name={entry.name} number={entry.number} />
   ));
 
 const Entry = ({ name, number }) => (
