@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
 import peopleService from "./services/people";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterText, setFilterText] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     peopleService.list().then((people) => setPersons(people));
   }, []);
+
+  const tempNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const addEntry = (event) => {
     event.preventDefault();
@@ -25,6 +32,7 @@ const App = () => {
         setPersons(persons.concat(returnedEntry));
         setNewName("");
         setNewNumber("");
+        tempNotification(`Added ${returnedEntry.name}`);
       });
     }
   };
@@ -32,25 +40,23 @@ const App = () => {
   const updateEntry = (id, entry) => {
     const message = `${entry.name} is already added to phonebook, do you want to replace the number with a new one?`;
     if (window.confirm(message)) {
-      peopleService
-        .update(id, entry)
-        .then((updatedEntry) =>
-          setPersons(
-            persons.map((person) =>
-              person.id === updatedEntry.id ? updatedEntry : person
-            )
+      peopleService.update(id, entry).then((updatedEntry) => {
+        setPersons(
+          persons.map((person) =>
+            person.id === updatedEntry.id ? updatedEntry : person
           )
         );
+        tempNotification(`Updated number for ${updatedEntry.name}`);
+      });
     }
   };
 
   const handleDelete = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)) {
-      peopleService
-        .delete(id)
-        .then((response) =>
-          setPersons(persons.filter((person) => person.id !== id))
-        );
+      peopleService.delete(id).then((response) => {
+        setPersons(persons.filter((person) => person.id !== id));
+        tempNotification(`Deleted entry for ${name}`);
+      });
     }
   };
 
@@ -74,6 +80,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <Filter filterText={filterText} handleChange={handleFilterChange} />
       <h3>Add a new entry</h3>
       <PersonForm
