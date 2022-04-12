@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import peopleService from "./services/people";
 import Notification from "./components/Notification";
+import PersonForm from "./components/PersonForm";
+import Entries from "./components/Entries";
+import Filter from "./components/Filter";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,9 +16,14 @@ const App = () => {
     peopleService.list().then((people) => setPersons(people));
   }, []);
 
-  const tempNotification = (message) => {
-    setNotification(message);
+  const showNotification = (message) => {
+    setNotification({ message, level: "success" });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  const showError = (message) => {
+    setNotification({ message, level: "error" });
+    setTimeout(() => setNotification(null), 10000);
   };
 
   const addEntry = (event) => {
@@ -32,7 +40,7 @@ const App = () => {
         setPersons(persons.concat(returnedEntry));
         setNewName("");
         setNewNumber("");
-        tempNotification(`Added ${returnedEntry.name}`);
+        showNotification(`Added ${returnedEntry.name}`);
       });
     }
   };
@@ -40,14 +48,24 @@ const App = () => {
   const updateEntry = (id, entry) => {
     const message = `${entry.name} is already added to phonebook, do you want to replace the number with a new one?`;
     if (window.confirm(message)) {
-      peopleService.update(id, entry).then((updatedEntry) => {
-        setPersons(
-          persons.map((person) =>
-            person.id === updatedEntry.id ? updatedEntry : person
-          )
-        );
-        tempNotification(`Updated number for ${updatedEntry.name}`);
-      });
+      peopleService
+        .update(id, entry)
+        .then((updatedEntry) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === updatedEntry.id ? updatedEntry : person
+            )
+          );
+          setNewName("");
+          setNewNumber("");
+          showNotification(`Updated number for ${updatedEntry.name}`);
+        })
+        .catch((error) => {
+          showError(
+            `Information of ${entry.name} has already been removed from server`
+          );
+          setPersons(persons.filter((person) => person.id !== id));
+        });
     }
   };
 
@@ -55,7 +73,7 @@ const App = () => {
     if (window.confirm(`Delete ${name} ?`)) {
       peopleService.delete(id).then((response) => {
         setPersons(persons.filter((person) => person.id !== id));
-        tempNotification(`Deleted entry for ${name}`);
+        showNotification(`Deleted entry for ${name}`);
       });
     }
   };
@@ -80,7 +98,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification notification={notification} />
       <Filter filterText={filterText} handleChange={handleFilterChange} />
       <h3>Add a new entry</h3>
       <PersonForm
@@ -95,43 +113,5 @@ const App = () => {
     </>
   );
 };
-
-const Filter = ({ filterText, handleChange }) => (
-  <p>
-    filter shown with <input value={filterText} onChange={handleChange} />
-  </p>
-);
-
-const PersonForm = ({
-  addEntry,
-  newName,
-  handleNameChange,
-  newNumber,
-  handleNumberChange,
-}) => (
-  <form onSubmit={addEntry}>
-    <div>
-      name: <input value={newName} onChange={handleNameChange} />
-    </div>
-    <div>
-      number: <input value={newNumber} onChange={handleNumberChange} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-);
-
-const Entries = ({ shownEntries, handleDelete }) =>
-  shownEntries.map((entry) => (
-    <Entry key={entry.id} entry={entry} handleDelete={handleDelete} />
-  ));
-
-const Entry = ({ entry: { name, number, id }, handleDelete }) => (
-  <p>
-    {name} {number}{" "}
-    <button onClick={() => handleDelete(id, name)}>delete</button>
-  </p>
-);
 
 export default App;
