@@ -41,6 +41,9 @@ const App = () => {
         setNewName("");
         setNewNumber("");
         showNotification(`Added ${returnedEntry.name}`);
+      })
+      .catch(error => {
+        showError(error.response.data.error);
       });
     }
   };
