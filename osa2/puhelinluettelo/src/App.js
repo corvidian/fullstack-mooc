@@ -36,15 +36,17 @@ const App = () => {
     if (oldEntry) {
       updateEntry(oldEntry.id, entry);
     } else {
-      peopleService.create(entry).then((returnedEntry) => {
-        setPersons(persons.concat(returnedEntry));
-        setNewName("");
-        setNewNumber("");
-        showNotification(`Added ${returnedEntry.name}`);
-      })
-      .catch(error => {
-        showError(error.response.data.error);
-      });
+      peopleService
+        .create(entry)
+        .then((returnedEntry) => {
+          setPersons(persons.concat(returnedEntry));
+          setNewName("");
+          setNewNumber("");
+          showNotification(`Added ${returnedEntry.name}`);
+        })
+        .catch((error) => {
+          showError(error.response.data.error);
+        });
     }
   };
 
@@ -64,10 +66,16 @@ const App = () => {
           showNotification(`Updated number for ${updatedEntry.name}`);
         })
         .catch((error) => {
-          showError(
-            `Information of ${entry.name} has already been removed from server`
-          );
-          setPersons(persons.filter((person) => person.id !== id));
+          if (error.response.status === 404) {
+            showError(
+              `Information of ${entry.name} has already been removed from server`
+            );
+            setPersons(persons.filter((person) => person.id !== id));
+          } else if (error.response.status === 400) {
+            showError(error.response.data.error);
+          } else {
+            showError("Update failed");
+          }
         });
     }
   };
